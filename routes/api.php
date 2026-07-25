@@ -15,10 +15,18 @@ use App\Http\Controllers\DevicePositionController;
 |
 */
 
+use App\Http\Controllers\AuthController;
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Mobile App Authentication Routes
+Route::post('/login', [AuthController::class, 'apiLogin']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'apiLogout']);
+});
+
 Route::post('/device/position', [\App\Http\Controllers\DevicePositionController::class, 'receive']);
 Route::get('/device/position', [\App\Http\Controllers\DevicePositionController::class, 'receive']);
-

@@ -19,11 +19,11 @@ class FleetMapController extends Controller
 
         $query = Device::with(['customer', 'latestPosition']);
 
-        // if ($user->role !== 'admin') {
-        //     $query->whereHas('customer', function($q) use ($user){
-        //         $q->where('user_id', $user->id);
-        //     });
-        // }
+        if ($user->role !== 'admin') {
+            $query->whereHas('customer', function($q) use ($user){
+                $q->where('user_id', $user->id);
+            });
+        }
 
         $devices = $query->get();
 
@@ -51,9 +51,9 @@ class FleetMapController extends Controller
         $device = Device::with('customer')->findOrFail($id);
         
         // Authorization check
-        // if ($user->role !== 'admin' && $device->customer->user_id !== $user->id) {
-        //     return response()->json(['error' => 'Unauthorized'], 403);
-        // }
+        if ($user->role !== 'admin' && $device->customer->user_id !== $user->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
         $positions = $device->positions()
             ->orderBy('position_time', 'asc')

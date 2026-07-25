@@ -379,6 +379,13 @@
             <div class="brand">
                 <img src="{{ asset('assets/logo-curut-v2.png') }}" alt="Logo">
                 <h1>NyingnyingTrack</h1>
+                
+                <form action="{{ route('logout') }}" method="POST" style="margin-left: auto;">
+                    @csrf
+                    <button type="submit" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.25rem; padding: 4px; transition: transform 0.2s;" title="Logout" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fa-solid fa-power-off"></i>
+                    </button>
+                </form>
             </div>
             <div class="search-container">
                 <i class="fa-solid fa-magnifying-glass"></i>

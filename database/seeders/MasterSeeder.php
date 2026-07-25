@@ -20,8 +20,8 @@ class MasterSeeder extends Seeder
         // 1. Create Admin User
         // =============================
         $admin = User::create([
-            'name' => 'Admin Transtrack',
-            'email' => 'admin@transtrack.test',
+            'name' => 'Admin NyingnyingTrack',
+            'email' => 'admin@nyingnyingtrack.co',
             'password' => Hash::make('password123'),
             'role' => 'admin',
         ]);

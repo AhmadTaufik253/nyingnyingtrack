@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FleetMapController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,9 +16,18 @@ use App\Http\Controllers\FleetMapController;
 */
 
 Route::get('/', function () {
-    return redirect('/fleet-map');
+    return redirect('/login');
+    // return redirect('/fleet-map');
 });
 
-Route::get('/fleet-map', [FleetMapController::class, 'index'])->name('fleet.map');
-Route::get('/api/fleet/devices', [FleetMapController::class, 'devices'])->name('fleet.devices');
-Route::get('/api/fleet/devices/{id}/history', [FleetMapController::class, 'deviceHistory'])->name('fleet.devices.history');
+// Authentication Routes
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Protected Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/fleet-map', [FleetMapController::class, 'index'])->name('fleet.map');
+    Route::get('/api/fleet/devices', [FleetMapController::class, 'devices'])->name('fleet.devices');
+    Route::get('/api/fleet/devices/{id}/history', [FleetMapController::class, 'deviceHistory'])->name('fleet.devices.history');
+});
