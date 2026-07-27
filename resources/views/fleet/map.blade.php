@@ -886,7 +886,7 @@
                             <div class="device-name">${d.customer_name} - ${d.name}</div>
                             <div class="device-meta">
                                 <span class="status-dot ${statusClass}"></span>
-                                ${d.model} • ${isMoving ? d.speed + ' km/h' : (isOnline ? 'Stationary' : 'Offline')}
+                                ${d.model} • ${isMoving ? d.speed + ' km/h' : (isOnline ? 'Online' : 'Offline')}
                             </div>
                         </div>
                     </div>
