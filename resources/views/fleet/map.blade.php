@@ -204,6 +204,22 @@
             100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
         }
 
+        .badge {
+            display: inline-block;
+            padding: 0.25em 0.5em;
+            font-size: 0.75rem;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.25rem;
+            color: white;
+        }
+
+        .bg-success { background-color: var(--success); }
+        .bg-secondary { background-color: var(--secondary); }
+
         /* --- FLOATING CONTROLS --- */
         .floating-panel {
             position: absolute;
@@ -936,7 +952,7 @@
 
                     <div class="custom-popup-row">
                     <span>GPS Time</span>
-                    <span>${d.gps_time ?? '-'}</span>
+                    <span>${formatDateTime(d.gps_time)}</span>
                     </div>
 
                     </div>
