@@ -20,24 +20,39 @@ class FleetMapController extends Controller
         $query = Device::with(['customer', 'latestPosition']);
 
         if ($user->role !== 'admin') {
-            $query->whereHas('customer', function($q) use ($user){
+            $query->whereHas('customer', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
             });
         }
 
         $devices = $query->get();
 
-        $data = $devices->map(function($d){
-            $lastPos = $d->latestPosition;
+        $data = $devices->map(function ($device) {
+
+            $last = $device->latestPosition;
+
             return [
-                'id' => $d->id,
-                'name' => $d->name,
-                'imei' => $d->imei,
-                'model' => $d->model,
-                'lat' => $lastPos->lat ?? null,
-                'lng' => $lastPos->lng ?? null,
-                'speed' => $lastPos->speed ?? 0,
-                'updated_at' => $lastPos->device_time ?? null
+
+                'id' => $device->id,
+                'name' => $device->name,
+                'imei' => $device->imei,
+                'model' => $device->model,
+
+                'latitude' => $last?->latitude,
+                'longitude' => $last?->longitude,
+
+                'speed' => $last?->speed ?? 0,
+                'angle' => $last?->angle ?? 0,
+                'satellites' => $last?->satellites ?? 0,
+
+                'battery' => $device->battery,
+                'voltage' => $device->voltage,
+                'gsm_signal' => $device->gsm_signal,
+                'ignition' => $device->ignition,
+
+                'gps_time' => $last?->gps_time,
+                'online' => $device->is_online,
+
             ];
         });
 
@@ -47,27 +62,45 @@ class FleetMapController extends Controller
     public function deviceHistory($id)
     {
         $user = Auth::user();
-        
+
         $device = Device::with('customer')->findOrFail($id);
-        
-        // Authorization check
-        if ($user->role !== 'admin' && $device->customer->user_id !== $user->id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+
+        if (
+            $user->role !== 'admin' &&
+            $device->customer->user_id != $user->id
+        ) {
+            return response()->json([
+                'error' => 'Unauthorized'
+            ], 403);
         }
 
         $positions = $device->positions()
-            ->orderBy('position_time', 'asc')
-            ->get(['lat', 'lng', 'position_time']);
+            ->orderBy('gps_time')
+            ->get([
+                'latitude',
+                'longitude',
+                'speed',
+                'angle',
+                'gps_time'
+            ]);
 
-        $data = $positions->map(function($p){
-            return [
-                'lat' => $p->lat,
-                'lng' => $p->lng,
-                'time' => $p->position_time,
-            ];
-        });
+        return response()->json(
 
-        return response()->json($data);
+            $positions->map(function ($position) {
+
+                return [
+
+                    'latitude' => $position->latitude,
+                    'longitude' => $position->longitude,
+                    'speed' => $position->speed,
+                    'angle' => $position->angle,
+                    'time' => $position->gps_time,
+
+                ];
+
+            })
+
+        );
     }
 
 }
