@@ -98,22 +98,21 @@ class DevicePositionController extends Controller
             $device->update([
 
                 'is_online' => true,
-
                 'last_seen' => now(),
 
                 'last_latitude' => $position->latitude,
-
                 'last_longitude' => $position->longitude,
-
                 'last_altitude' => $position->altitude,
-
                 'last_speed' => $position->speed,
-
                 'last_course' => $position->angle,
 
                 'last_satellites' => $position->satellites,
-
                 'last_position_time' => $position->gps_time,
+
+                'battery'            => $record['battery'] ?? null,
+                'voltage'            => $record['voltage'] ?? null,
+                'gsm_signal'         => $record['gsm_signal'] ?? null,
+                'ignition'           => $record['ignition'] ?? false,
             ]);
         }
 

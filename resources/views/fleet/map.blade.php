@@ -658,6 +658,21 @@
 
             event.currentTarget.classList.add("active");
         }
+        function formatDateTime(dateString) {
+            if (!dateString) return '-';
+
+            const date = new Date(dateString);
+
+            return date.toLocaleString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+        }
     </script>
 
     <script>
@@ -759,7 +774,8 @@
             document.getElementById('detail-imei').textContent = device.imei;
             document.getElementById('detail-model').textContent = device.model;
             document.getElementById('detail-speed').textContent = `${device.speed || 0} km/h`;
-            document.getElementById('detail-time').textContent = device.updated_at || 'Never';
+            // document.getElementById('detail-time').textContent = device.updated_at || 'Never';
+            document.getElementById('detail-time').textContent = formatDateTime(device.updated_at);
             document.getElementById('detail-latitude').textContent = device.latitude ?? '-';
             document.getElementById('detail-longitude').textContent = device.longitude ?? '-';
             document.getElementById('detail-altitude').textContent = device.altitude ?? '-';
