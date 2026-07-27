@@ -750,7 +750,22 @@
                 return;
             }
 
-            logs.forEach(log=>{
+            // logs.forEach(log=>{
+
+            //     tbody.innerHTML += `
+            //         <tr>
+            //             <td>${log.gps_time}</td>
+            //             <td>${log.speed} km/h</td>
+            //             <td>${Number(log.latitude).toFixed(6)}</td>
+            //             <td>${Number(log.longitude).toFixed(6)}</td>
+            //             <td>${log.battery ?? "-"}</td>
+            //             <td>${log.gsm_signal ?? "-"}</td>
+            //             <td>${log.ignition ? "ON" : "OFF"}</td>
+            //         </tr>
+            //     `;
+
+            // });
+            logs.forEach(log => {
 
                 tbody.innerHTML += `
                     <tr>
@@ -758,9 +773,15 @@
                         <td>${log.speed} km/h</td>
                         <td>${Number(log.latitude).toFixed(6)}</td>
                         <td>${Number(log.longitude).toFixed(6)}</td>
-                        <td>${log.battery ?? "-"}</td>
+                        <td>${log.battery ?? "-"} V</td>
                         <td>${log.gsm_signal ?? "-"}</td>
-                        <td>${log.ignition ? "ON" : "OFF"}</td>
+                        <td>
+                            ${
+                                log.ignition
+                                    ? '<span class="badge bg-success">ON</span>'
+                                    : '<span class="badge bg-secondary">OFF</span>'
+                            }
+                        </td>
                     </tr>
                 `;
 

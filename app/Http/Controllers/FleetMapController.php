@@ -128,31 +128,70 @@ class FleetMapController extends Controller
         );
     }
 
+    // public function deviceLogs($id)
+    // {
+    //     $device = Device::findOrFail($id);
+
+    //     return $device->positions()
+    //         ->latest('gps_time')
+    //         ->limit(50)
+    //         ->get([
+    //             'gps_time',
+    //             'speed',
+    //             'latitude',
+    //             'longitude',
+    //             'attributes'
+    //         ])
+    //         ->map(function ($row) {
+    //             return [
+    //                 'gps_time' => $row->gps_time->format('Y-m-d H:i:s'),
+    //                 'speed' => $row->speed,
+    //                 'latitude' => $row->latitude,
+    //                 'longitude' => $row->longitude,
+    //                 'battery' => $row->attributes['battery'] ?? '-',
+    //                 'gsm_signal' => $row->attributes['gsm_signal'] ?? '-',
+    //                 'ignition' => $row->attributes['ignition'] ?? false,
+    //             ];
+    //         });
+    // }
     public function deviceLogs($id)
     {
         $device = Device::findOrFail($id);
 
-        return $device->positions()
+        $logs = $device->positions()
             ->latest('gps_time')
-            ->limit(50)
-            ->get([
-                'gps_time',
-                'speed',
-                'latitude',
-                'longitude',
-                'attributes'
-            ])
-            ->map(function ($row) {
+            ->limit(100)
+            ->get()
+            ->map(function ($item) {
+
+                $attr = $item->attributes ?? [];
+
                 return [
-                    'gps_time' => $row->gps_time->format('Y-m-d H:i:s'),
-                    'speed' => $row->speed,
-                    'latitude' => $row->latitude,
-                    'longitude' => $row->longitude,
-                    'battery' => $row->attributes['battery'] ?? '-',
-                    'gsm_signal' => $row->attributes['gsm_signal'] ?? '-',
-                    'ignition' => $row->attributes['ignition'] ?? false,
+                    'gps_time'   => $item->gps_time->format('d M Y H:i:s'),
+
+                    'latitude'   => $item->latitude,
+                    'longitude'  => $item->longitude,
+
+                    'speed'      => $item->speed,
+                    'altitude'   => $item->altitude,
+                    'course'     => $item->angle,
+                    'satellite'  => $item->satellites,
+
+                    'battery'    => isset($attr['67'])
+                        ? $attr['67'] / 1000
+                        : null,
+
+                    'voltage'    => isset($attr['66'])
+                        ? $attr['66'] / 1000
+                        : null,
+
+                    'gsm_signal' => $attr['21'] ?? null,
+
+                    'ignition'   => ($attr['239'] ?? 0) == 1,
                 ];
             });
+
+        return response()->json($logs);
     }
 
 }
