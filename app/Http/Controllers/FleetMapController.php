@@ -53,7 +53,9 @@ class FleetMapController extends Controller
 
                 'gps_time' => $last?->gps_time,
 
-                'online' => $device->is_online,
+                // Dianggap online jika last_seen ada dan kurang dari 5 menit yang lalu
+                'online' => $device->last_seen && $device->last_seen->diffInMinutes(now()) <= 5,
+                
                 'customer_name' => $device->customer->name,
 
             ];
