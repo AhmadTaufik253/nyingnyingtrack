@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Device;
 use App\Models\DevicePosition;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class DevicePositionController extends Controller
 {
@@ -35,6 +36,7 @@ class DevicePositionController extends Controller
         }
 
         foreach ($request->records as $record) {
+            $gpsTime = Carbon::parse($record['position_time'], 'UTC')->setTimezone('Asia/Jakarta');
 
             $position = DevicePosition::create([
 
@@ -55,7 +57,7 @@ class DevicePositionController extends Controller
 
                 'event_id' => $record['event_id'] ?? null,
 
-                'gps_time' => $record['position_time'],
+                'gps_time' => $gpsTime,
 
                 'attributes' => $record['attributes'] ?? [],
             ]);
