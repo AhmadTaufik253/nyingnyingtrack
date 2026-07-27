@@ -28,6 +28,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Protected Routes
 Route::middleware('auth')->group(function () {
     Route::get('/fleet-map', [FleetMapController::class, 'index'])->name('fleet.map');
+    Route::get('/fleet/devices/{id}/logs', [FleetController::class, 'deviceLogs']);
     Route::get('/api/fleet/devices', [FleetMapController::class, 'devices'])->name('fleet.devices');
     Route::get('/api/fleet/devices/{id}/history', [FleetMapController::class, 'deviceHistory'])->name('fleet.devices.history');
 });

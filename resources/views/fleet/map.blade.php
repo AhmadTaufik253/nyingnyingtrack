@@ -242,7 +242,7 @@
             letter-spacing: 0.05em;
         }
 
-        #details-panel {
+        /* #details-panel {
             bottom: 20px;
             right: 20px;
             width: 400px;
@@ -250,6 +250,58 @@
             overflow-y: auto;
             transform: translateY(120%);
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        } */
+        #details-panel{
+            bottom:20px;
+            right:20px;
+
+            width:700px;
+            max-height:85vh;
+            overflow-y:auto;
+
+            transform:translateY(120%);
+            transition:transform .4s cubic-bezier(.4,0,.2,1);
+        }
+
+        .log-table-wrapper{
+            margin-top:20px;
+            max-height:300px;
+            overflow-y:auto;
+            border:1px solid #e5e7eb;
+            border-radius:10px;
+        }
+
+        .log-table{
+            width:100%;
+            border-collapse:collapse;
+            font-size:13px;
+        }
+
+        .log-table thead{
+            position:sticky;
+            top:0;
+            background:#f8fafc;
+            z-index:10;
+        }
+
+        .log-table th{
+            padding:10px;
+            text-align:left;
+            border-bottom:1px solid #e5e7eb;
+            font-weight:600;
+        }
+
+        .log-table td{
+            padding:8px 10px;
+            border-bottom:1px solid #f1f5f9;
+        }
+
+        .log-table tbody tr:hover{
+            background:#f8fafc;
+        }
+
+        .log-table td{
+            white-space:nowrap;
         }
 
         #details-panel.visible {
@@ -286,6 +338,54 @@
             font-size: 0.85rem;
             font-weight: 600;
         }
+
+        /* baru */
+        .details-tabs{
+            display:flex;
+            margin-bottom:15px;
+            gap:8px;
+        }
+
+        .tab-btn{
+
+            flex:1;
+
+            border:none;
+
+            background:#f4f4f4;
+
+            padding:10px;
+
+            cursor:pointer;
+
+            border-radius:8px;
+
+            font-weight:600;
+
+        }
+
+        .tab-btn.active{
+
+            background:#2563eb;
+
+            color:white;
+
+        }
+
+        #device-log-list{
+
+            max-height:430px;
+
+            overflow-y:auto;
+
+            display:flex;
+
+            flex-direction:column;
+
+            gap:10px;
+
+        }
+        /* end baru */
 
         /* --- TOGGLE BUTTON --- */
         #sidebar-toggle {
@@ -433,77 +533,144 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
-        <div class="details-grid">
-            <div class="detail-card">
-                <div class="detail-label">IMEI</div>
-                <div class="detail-value" id="detail-imei">-</div>
-            </div>
-            <div class="detail-card">
-                <div class="detail-label">Model</div>
-                <div class="detail-value" id="detail-model">-</div>
-            </div>
-            <div class="detail-card">
-                <div class="detail-label">Current Speed</div>
-                <div class="detail-value" id="detail-speed">0 km/h</div>
-            </div>
-            <div class="detail-card">
-                <div class="detail-label">Last Connection</div>
-                <div class="detail-value" id="detail-time">-</div>
-            </div>
-            <div class="detail-card">
-                <div class="detail-label">Latitude</div>
-                <div class="detail-value" id="detail-latitude">-</div>
-            </div>
+        <button
+            class="tab-btn active"
+            onclick="openTab('info')">
+            Device Info
+        </button>
 
-            <div class="detail-card">
-                <div class="detail-label">Longitude</div>
-                <div class="detail-value" id="detail-longitude">-</div>
-            </div>
+        <button
+            class="tab-btn"
+            onclick="openTab('logs')">
+            Logs
+        </button>
+        <div id="tab-info">
+            <!-- details-grid -->
+            <div class="details-grid">
+                <div class="detail-card">
+                    <div class="detail-label">IMEI</div>
+                    <div class="detail-value" id="detail-imei">-</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-label">Model</div>
+                    <div class="detail-value" id="detail-model">-</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-label">Current Speed</div>
+                    <div class="detail-value" id="detail-speed">0 km/h</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-label">Last Connection</div>
+                    <div class="detail-value" id="detail-time">-</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-label">Latitude</div>
+                    <div class="detail-value" id="detail-latitude">-</div>
+                </div>
 
-            <div class="detail-card">
-                <div class="detail-label">Altitude</div>
-                <div class="detail-value" id="detail-altitude">-</div>
-            </div>
+                <div class="detail-card">
+                    <div class="detail-label">Longitude</div>
+                    <div class="detail-value" id="detail-longitude">-</div>
+                </div>
 
-            <div class="detail-card">
-                <div class="detail-label">Course</div>
-                <div class="detail-value" id="detail-angle">-</div>
-            </div>
+                <div class="detail-card">
+                    <div class="detail-label">Altitude</div>
+                    <div class="detail-value" id="detail-altitude">-</div>
+                </div>
 
-            <div class="detail-card">
-                <div class="detail-label">Satellites</div>
-                <div class="detail-value" id="detail-satellites">-</div>
-            </div>
+                <div class="detail-card">
+                    <div class="detail-label">Course</div>
+                    <div class="detail-value" id="detail-angle">-</div>
+                </div>
 
-            <div class="detail-card">
-                <div class="detail-label">Battery</div>
-                <div class="detail-value" id="detail-battery">-</div>
-            </div>
+                <div class="detail-card">
+                    <div class="detail-label">Satellites</div>
+                    <div class="detail-value" id="detail-satellites">-</div>
+                </div>
 
-            <div class="detail-card">
-                <div class="detail-label">Voltage</div>
-                <div class="detail-value" id="detail-voltage">-</div>
-            </div>
+                <div class="detail-card">
+                    <div class="detail-label">Battery</div>
+                    <div class="detail-value" id="detail-battery">-</div>
+                </div>
 
-            <div class="detail-card">
-                <div class="detail-label">GSM Signal</div>
-                <div class="detail-value" id="detail-gsm">-</div>
-            </div>
+                <div class="detail-card">
+                    <div class="detail-label">Voltage</div>
+                    <div class="detail-value" id="detail-voltage">-</div>
+                </div>
 
-            <div class="detail-card">
-                <div class="detail-label">Ignition</div>
-                <div class="detail-value" id="detail-ignition">-</div>
+                <div class="detail-card">
+                    <div class="detail-label">GSM Signal</div>
+                    <div class="detail-value" id="detail-gsm">-</div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-label">Ignition</div>
+                    <div class="detail-value" id="detail-ignition">-</div>
+                </div>
             </div>
         </div>
+        <div id="tab-logs" style="display:none">
+
+            <div id="device-log-list"></div>
+
+        </div>
+        
         <div style="margin-top: 16px;">
             <button id="view-history-btn" class="search-input" style="padding: 10px; background: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer;">
                 <i class="fa-solid fa-route"></i> View Movement History
             </button>
+            <div class="log-table-wrapper">
+
+            <table class="log-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Time</th>
+                        <th>Speed</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>Battery</th>
+                        <th>Signal</th>
+                        <th>Ignition</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="device-log-table">
+
+                    <tr>
+                        <td colspan="7" style="text-align:center">
+                            No Data
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
         </div>
     </div>
 
     <!-- Map -->
     <main id="map"></main>
+
+    <script>
+        function openTab(tab){
+
+            document.getElementById('tab-info').style.display =
+                tab === 'info' ? 'block' : 'none';
+
+            document.getElementById('tab-logs').style.display =
+                tab === 'logs' ? 'block' : 'none';
+
+            document.querySelectorAll(".tab-btn")
+                .forEach(b=>b.classList.remove("active"));
+
+            event.target.classList.add("active");
+        }
+    </script>
 
     <script>
         // --- CONFIG & STATE ---
@@ -557,6 +724,47 @@
             }
         };
 
+        async function loadDeviceLogs(deviceId){
+
+            const res = await fetch(`/api/fleet/devices/${deviceId}/logs`);
+
+            const logs = await res.json();
+
+            const tbody = document.getElementById("device-log-table");
+
+            tbody.innerHTML = "";
+
+            if(logs.length===0){
+
+                tbody.innerHTML=`
+                    <tr>
+                        <td colspan="7" align="center">
+                            No Logs
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+            logs.forEach(log=>{
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${log.gps_time}</td>
+                        <td>${log.speed} km/h</td>
+                        <td>${Number(log.latitude).toFixed(6)}</td>
+                        <td>${Number(log.longitude).toFixed(6)}</td>
+                        <td>${log.battery ?? "-"}</td>
+                        <td>${log.gsm_signal ?? "-"}</td>
+                        <td>${log.ignition ? "ON" : "OFF"}</td>
+                    </tr>
+                `;
+
+            });
+
+        }
+
         const showDetails = (device) => {
             activeDeviceId = device.id;
             document.getElementById('detail-name').textContent = device.name;
@@ -574,7 +782,7 @@
             document.getElementById('detail-gsm').textContent = device.gsm_signal ?? '-';
             document.getElementById('detail-ignition').textContent = device.ignition ? 'ON' : 'OFF';
             document.getElementById('detail-time').textContent = device.gps_time ?? '-';
-            
+            loadDeviceLogs(device.id);
             const btn = document.getElementById('view-history-btn');
             btn.onclick = () => loadHistory(device.id, device.name);
             

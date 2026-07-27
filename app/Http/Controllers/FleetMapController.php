@@ -128,4 +128,31 @@ class FleetMapController extends Controller
         );
     }
 
+    public function deviceLogs($id)
+    {
+        $device = Device::findOrFail($id);
+
+        return $device->positions()
+            ->latest('gps_time')
+            ->limit(50)
+            ->get([
+                'gps_time',
+                'speed',
+                'latitude',
+                'longitude',
+                'attributes'
+            ])
+            ->map(function ($row) {
+                return [
+                    'gps_time' => $row->gps_time->format('Y-m-d H:i:s'),
+                    'speed' => $row->speed,
+                    'latitude' => $row->latitude,
+                    'longitude' => $row->longitude,
+                    'battery' => $row->attributes['battery'] ?? '-',
+                    'gsm_signal' => $row->attributes['gsm_signal'] ?? '-',
+                    'ignition' => $row->attributes['ignition'] ?? false,
+                ];
+            });
+    }
+
 }
