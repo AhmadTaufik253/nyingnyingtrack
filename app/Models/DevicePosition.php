@@ -8,7 +8,27 @@ use Illuminate\Database\Eloquent\Model;
 class DevicePosition extends Model
 {
     protected $fillable = [
-        'device_id', 'lat', 'lng', 'speed', 'course', 'satellite', 'position_time'
+
+        'device_id',
+
+        'lat',
+        'lng',
+
+        'altitude',
+
+        'speed',
+
+        'course',
+
+        'satellite',
+
+        'position_time',
+
+        'priority',
+
+        'event_id',
+
+        'attributes',
     ];
 
     public function device()

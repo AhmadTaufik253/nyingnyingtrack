@@ -12,23 +12,38 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('device_positions', function (Blueprint $table) {
-            $table->id();
 
-            $table->foreignId('device_id')
-                ->constrained('devices')
-                ->onDelete('cascade');
+        $table->id();
 
-            $table->decimal('lat', 10, 6);
-            $table->decimal('lng', 10, 6);
+        $table->foreignId('device_id')
+            ->constrained()
+            ->cascadeOnDelete();
 
-            $table->float('speed')->nullable();
-            $table->float('course')->nullable();
-            $table->integer('satellite')->nullable();
+        // GPS
+        $table->decimal('latitude',10,7);
+        $table->decimal('longitude',10,7);
 
-            $table->timestamp('position_time')->nullable(); // waktu asli dari GPS
+        $table->integer('altitude')->nullable();
+        $table->integer('angle')->nullable();
 
-            $table->timestamps();
-        });
+        $table->float('speed')->default(0);
+
+        $table->unsignedTinyInteger('satellites')->default(0);
+
+        // AVL
+        $table->unsignedTinyInteger('priority')->nullable();
+        $table->unsignedTinyInteger('event_id')->nullable();
+
+        // GPS Time
+        $table->timestamp('gps_time');
+
+        // Semua IO
+        $table->json('attributes')->nullable();
+
+        $table->timestamps();
+
+        $table->index(['device_id','gps_time']);
+    });
     }
 
     /**

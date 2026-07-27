@@ -11,11 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('device_events', function (Blueprint $table) {
+       Schema::create('device_events', function (Blueprint $table) {
+
             $table->id();
-            $table->foreignId('device_id')->constrained()->cascadeOnDelete();
-            $table->string('type');            // ignition_on, sos, power_cut, battery_low, dll
-            $table->json('data')->nullable();  // optional
+
+            $table->foreignId('device_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->foreignId('position_id')
+                ->nullable()
+                ->constrained('device_positions')
+                ->nullOnDelete();
+
+            $table->string('type');
+
+            $table->text('message')->nullable();
+
+            $table->json('attributes')->nullable();
+
+            $table->timestamp('event_time');
+
             $table->timestamps();
         });
     }
