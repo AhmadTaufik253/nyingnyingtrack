@@ -867,7 +867,7 @@
                             <i class="fa-solid fa-truck-fast"></i>
                         </div>
                         <div class="device-info">
-                            <div class="device-name">${d.name}</div>
+                            <div class="device-name">${d.customer_name} - ${d.name}</div>
                             <div class="device-meta">
                                 <span class="status-dot ${statusClass}"></span>
                                 ${d.model} • ${isMoving ? d.speed + ' km/h' : (isOnline ? 'Stationary' : 'Offline')}
