@@ -535,13 +535,13 @@
         </div>
         <button
             class="tab-btn active"
-            onclick="openTab('info')">
+            onclick="openTab(event, 'info')">
             Device Info
         </button>
 
         <button
             class="tab-btn"
-            onclick="openTab('logs')">
+            onclick="openTab(event, 'logs')">
             Logs
         </button>
         <div id="tab-info">
@@ -610,46 +610,34 @@
             </div>
         </div>
         <div id="tab-logs" style="display:none">
-
-            <div id="device-log-list"></div>
-
+            <div class="log-table-wrapper">
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Speed</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                            <th>Battery</th>
+                            <th>Signal</th>
+                            <th>Ignition</th>
+                        </tr>
+                    </thead>
+                    <tbody id="device-log-table">
+                        <tr>
+                            <td colspan="7" style="text-align:center">
+                                No Data
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         
         <div style="margin-top: 16px;">
-            <button id="view-history-btn" class="search-input" style="padding: 10px; background: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer;">
+            <button id="view-history-btn" class="search-input" style="padding: 10px; background: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer; width: 100%;">
                 <i class="fa-solid fa-route"></i> View Movement History
             </button>
-            <div class="log-table-wrapper">
-
-            <table class="log-table">
-
-                <thead>
-
-                    <tr>
-                        <th>Time</th>
-                        <th>Speed</th>
-                        <th>Latitude</th>
-                        <th>Longitude</th>
-                        <th>Battery</th>
-                        <th>Signal</th>
-                        <th>Ignition</th>
-                    </tr>
-
-                </thead>
-
-                <tbody id="device-log-table">
-
-                    <tr>
-                        <td colspan="7" style="text-align:center">
-                            No Data
-                        </td>
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
         </div>
     </div>
 
@@ -657,7 +645,7 @@
     <main id="map"></main>
 
     <script>
-        function openTab(tab){
+        function openTab(event, tab){
 
             document.getElementById('tab-info').style.display =
                 tab === 'info' ? 'block' : 'none';
@@ -668,7 +656,7 @@
             document.querySelectorAll(".tab-btn")
                 .forEach(b=>b.classList.remove("active"));
 
-            event.target.classList.add("active");
+            event.currentTarget.classList.add("active");
         }
     </script>
 
