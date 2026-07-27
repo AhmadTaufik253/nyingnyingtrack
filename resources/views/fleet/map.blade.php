@@ -853,9 +853,9 @@
 
         function updateStats(devices) {
             document.getElementById('count-total').textContent = devices.length;
-            document.getElementById('count-moving').textContent = devices.filter(d => (d.speed || 0) > 0).length;
-            document.getElementById('count-stationary').textContent = devices.filter(d => (d.speed || 0) == 0 && d.latitude).length;
-            document.getElementById('count-offline').textContent = devices.filter(d => !d.latitude).length;
+            document.getElementById('count-moving').textContent = devices.filter(d => d.online && (d.speed || 0) > 0).length;
+            document.getElementById('count-stationary').textContent = devices.filter(d => d.online && (d.speed || 0) == 0).length;
+            document.getElementById('count-offline').textContent = devices.filter(d => !d.online).length;
         }
 
         function renderDeviceList(devices) {
@@ -873,8 +873,8 @@
             }
 
             container.innerHTML = filtered.map(d => {
-                const isOnline = d.latitude && d.longitude;
-                const isMoving = (d.speed || 0) > 0;
+                const isOnline = d.online;
+                const isMoving = isOnline && (d.speed || 0) > 0;
                 const statusClass = !isOnline ? 'status-offline' : (isMoving ? 'status-moving' : 'status-online');
                 
                 return `
