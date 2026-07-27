@@ -44,18 +44,20 @@ class DevicePositionController extends Controller
     public function receive(Request $request)
     {
         $request->validate([
-            'imei'        => 'required|string',
-            'latitude'    => 'required|numeric',
-            'longitude'   => 'required|numeric',
-            'gps_time'    => 'required|date',
+            'imei' => 'required|string',
+            'records' => 'required|array|min:1',
 
-            'speed'       => 'nullable|numeric',
-            'altitude'    => 'nullable|integer',
-            'angle'       => 'nullable|integer',
-            'satellites'  => 'nullable|integer',
-            'priority'    => 'nullable|integer',
-            'event_id'    => 'nullable|integer',
-            'attributes'  => 'nullable|array',
+            'records.*.latitude' => 'required|numeric',
+            'records.*.longitude' => 'required|numeric',
+            'records.*.position_time' => 'required|date',
+
+            'records.*.speed' => 'nullable|numeric',
+            'records.*.altitude' => 'nullable|integer',
+            'records.*.course' => 'nullable|integer',
+            'records.*.satellite' => 'nullable|integer',
+            'records.*.priority' => 'nullable|integer',
+            'records.*.event_id' => 'nullable|integer',
+            'records.*.attributes' => 'nullable|array',
         ]);
 
         $device = Device::where('imei', $request->imei)->first();
@@ -66,37 +68,54 @@ class DevicePositionController extends Controller
             ], 404);
         }
 
-        $position = DevicePosition::create([
-            'device_id'   => $device->id,
+        foreach ($request->records as $record) {
 
-            'latitude'    => $request->latitude,
-            'longitude'   => $request->longitude,
+            $position = DevicePosition::create([
 
-            'altitude'    => $request->altitude,
-            'angle'       => $request->angle,
-            'speed'       => $request->speed ?? 0,
-            'satellites'  => $request->satellites ?? 0,
+                'device_id' => $device->id,
 
-            'priority'    => $request->priority,
-            'event_id'    => $request->event_id,
+                'latitude' => $record['latitude'],
+                'longitude' => $record['longitude'],
 
-            'gps_time'    => $request->gps_time,
+                'altitude' => $record['altitude'] ?? 0,
 
-            'attributes'  => $request->attributes,
-        ]);
+                'angle' => $record['course'] ?? 0,
 
-        $device->update([
-            'is_online'          => true,
-            'last_seen'          => now(),
+                'speed' => $record['speed'] ?? 0,
 
-            'last_latitude'      => $position->latitude,
-            'last_longitude'     => $position->longitude,
-            'last_altitude'      => $position->altitude,
-            'last_speed'         => $position->speed,
-            'last_course'        => $position->angle,
-            'last_satellites'    => $position->satellites,
-            'last_position_time' => $position->gps_time,
-        ]);
+                'satellites' => $record['satellite'] ?? 0,
+
+                'priority' => $record['priority'] ?? null,
+
+                'event_id' => $record['event_id'] ?? null,
+
+                'gps_time' => $record['position_time'],
+
+                'attributes' => $record['attributes'] ?? [],
+            ]);
+
+            // update posisi terakhir device
+            $device->update([
+
+                'is_online' => true,
+
+                'last_seen' => now(),
+
+                'last_latitude' => $position->latitude,
+
+                'last_longitude' => $position->longitude,
+
+                'last_altitude' => $position->altitude,
+
+                'last_speed' => $position->speed,
+
+                'last_course' => $position->angle,
+
+                'last_satellites' => $position->satellites,
+
+                'last_position_time' => $position->gps_time,
+            ]);
+        }
 
         return response()->json([
             'success' => true

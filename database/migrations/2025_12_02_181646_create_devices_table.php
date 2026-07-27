@@ -45,6 +45,11 @@ return new class extends Migration
             $table->integer('last_course')->nullable();
             $table->integer('last_satellites')->nullable();
 
+            $table->decimal('battery', 5, 2)->nullable();
+            $table->decimal('voltage', 5, 2)->nullable();
+            $table->unsignedTinyInteger('gsm_signal')->nullable();
+            $table->boolean('ignition')->default(false);
+
             $table->timestamp('last_position_time')->nullable();
 
             $table->timestamps();

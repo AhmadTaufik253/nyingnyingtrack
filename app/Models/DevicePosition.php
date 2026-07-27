@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DevicePosition extends Model
@@ -11,24 +10,44 @@ class DevicePosition extends Model
 
         'device_id',
 
-        'lat',
-        'lng',
+        'latitude',
+        'longitude',
 
         'altitude',
+        'angle',
 
         'speed',
 
-        'course',
-
-        'satellite',
-
-        'position_time',
+        'satellites',
 
         'priority',
 
         'event_id',
 
+        'gps_time',
+
         'attributes',
+    ];
+
+    protected $casts = [
+
+        'gps_time' => 'datetime',
+
+        'attributes' => 'array',
+
+        'latitude' => 'float',
+        'longitude' => 'float',
+
+        'speed' => 'float',
+
+        'altitude' => 'integer',
+        'angle' => 'integer',
+
+        'satellites' => 'integer',
+
+        'priority' => 'integer',
+
+        'event_id' => 'integer',
     ];
 
     public function device()

@@ -8,23 +8,54 @@ use Illuminate\Database\Eloquent\Model;
 class Device extends Model
 {
     protected $fillable = [
+
         'customer_id',
+
         'imei',
         'name',
         'model',
-        'sim_number',
+        'protocol',
         'firmware',
-        'is_active',
 
-        'last_seen_at',
+        'sim_number',
+        'phone_number',
+
+        'is_active',
+        'is_online',
+
         'last_ip',
-        'last_port',
+        'last_seen',
+
+        'last_latitude',
+        'last_longitude',
+        'last_altitude',
+        'last_speed',
+        'last_course',
+        'last_satellites',
 
         'battery',
         'voltage',
         'gsm_signal',
-
         'ignition',
+
+        'last_position_time',
+    ];
+
+    protected $casts = [
+
+        'is_active' => 'boolean',
+        'is_online' => 'boolean',
+        'ignition' => 'boolean',
+
+        'battery' => 'float',
+        'voltage' => 'float',
+
+        'last_latitude' => 'float',
+        'last_longitude' => 'float',
+        'last_speed' => 'float',
+
+        'last_seen' => 'datetime',
+        'last_position_time' => 'datetime',
     ];
 
     public function customer()
@@ -39,7 +70,8 @@ class Device extends Model
 
     public function latestPosition()
     {
-        return $this->hasOne(DevicePosition::class)->latestOfMany();
+        return $this->hasOne(DevicePosition::class)
+                    ->latest('gps_time');
     }
 
     public function events()
