@@ -551,8 +551,8 @@
         function updateStats(devices) {
             document.getElementById('count-total').textContent = devices.length;
             document.getElementById('count-moving').textContent = devices.filter(d => (d.speed || 0) > 0).length;
-            document.getElementById('count-stationary').textContent = devices.filter(d => (d.speed || 0) == 0 && d.lat).length;
-            document.getElementById('count-offline').textContent = devices.filter(d => !d.lat).length;
+            document.getElementById('count-stationary').textContent = devices.filter(d => (d.speed || 0) == 0 && d.latitude).length;
+            document.getElementById('count-offline').textContent = devices.filter(d => !d.latitude).length;
         }
 
         function renderDeviceList(devices) {
@@ -570,7 +570,7 @@
             }
 
             container.innerHTML = filtered.map(d => {
-                const isOnline = d.lat && d.lng;
+                const isOnline = d.latitude && d.longitude;
                 const isMoving = (d.speed || 0) > 0;
                 const statusClass = !isOnline ? 'status-offline' : (isMoving ? 'status-moving' : 'status-online');
                 
@@ -596,9 +596,9 @@
             markersMap = {};
 
             devices.forEach(d => {
-                if (!d.lat || !d.lng) return;
+                if (!d.latitude || !d.longitude) return;
 
-                const marker = L.marker([d.lat, d.lng], { icon: customIcon });
+                const marker = L.marker([d.latitude, d.longitude], { icon: customIcon });
                 
                 const popupContent = `
                     <div style="min-width: 180px;">
@@ -635,7 +635,7 @@
                     return;
                 }
 
-                const path = history.map(p => [p.lat, p.lng]);
+                const path = history.map(p => [p.latitude, p.longitude]);
                 activePolyline = L.polyline(path, {
                     color: 'var(--primary)',
                     weight: 5,
