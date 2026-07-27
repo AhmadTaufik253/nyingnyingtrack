@@ -31,6 +31,29 @@ class FleetMapController extends Controller
 
             $last = $device->latestPosition;
 
+            // return [
+
+            //     'id' => $device->id,
+            //     'name' => $device->name,
+            //     'imei' => $device->imei,
+            //     'model' => $device->model,
+
+            //     'latitude' => $last?->latitude,
+            //     'longitude' => $last?->longitude,
+
+            //     'speed' => $last?->speed ?? 0,
+            //     'angle' => $last?->angle ?? 0,
+            //     'satellites' => $last?->satellites ?? 0,
+
+            //     'battery' => $device->battery,
+            //     'voltage' => $device->voltage,
+            //     'gsm_signal' => $device->gsm_signal,
+            //     'ignition' => $device->ignition,
+
+            //     'gps_time' => $last?->gps_time,
+            //     'online' => $device->is_online,
+
+            // ];
             return [
 
                 'id' => $device->id,
@@ -41,9 +64,10 @@ class FleetMapController extends Controller
                 'latitude' => $last?->latitude,
                 'longitude' => $last?->longitude,
 
-                'speed' => $last?->speed ?? 0,
-                'angle' => $last?->angle ?? 0,
-                'satellites' => $last?->satellites ?? 0,
+                'speed' => $last?->speed,
+                'altitude' => $last?->altitude,
+                'angle' => $last?->angle,
+                'satellites' => $last?->satellites,
 
                 'battery' => $device->battery,
                 'voltage' => $device->voltage,
@@ -51,6 +75,7 @@ class FleetMapController extends Controller
                 'ignition' => $device->ignition,
 
                 'gps_time' => $last?->gps_time,
+
                 'online' => $device->is_online,
 
             ];

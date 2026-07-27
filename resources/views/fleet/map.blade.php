@@ -450,6 +450,50 @@
                 <div class="detail-label">Last Connection</div>
                 <div class="detail-value" id="detail-time">-</div>
             </div>
+            <div class="detail-card">
+                <div class="detail-label">Latitude</div>
+                <div class="detail-value" id="detail-latitude">-</div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-label">Longitude</div>
+                <div class="detail-value" id="detail-longitude">-</div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-label">Altitude</div>
+                <div class="detail-value" id="detail-altitude">-</div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-label">Course</div>
+                <div class="detail-value" id="detail-angle">-</div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-label">Satellites</div>
+                <div class="detail-value" id="detail-satellites">-</div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-label">Battery</div>
+                <div class="detail-value" id="detail-battery">-</div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-label">Voltage</div>
+                <div class="detail-value" id="detail-voltage">-</div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-label">GSM Signal</div>
+                <div class="detail-value" id="detail-gsm">-</div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-label">Ignition</div>
+                <div class="detail-value" id="detail-ignition">-</div>
+            </div>
         </div>
         <div style="margin-top: 16px;">
             <button id="view-history-btn" class="search-input" style="padding: 10px; background: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer;">
@@ -520,6 +564,16 @@
             document.getElementById('detail-model').textContent = device.model;
             document.getElementById('detail-speed').textContent = `${device.speed || 0} km/h`;
             document.getElementById('detail-time').textContent = device.updated_at || 'Never';
+            document.getElementById('detail-latitude').textContent = device.latitude ?? '-';
+            document.getElementById('detail-longitude').textContent = device.longitude ?? '-';
+            document.getElementById('detail-altitude').textContent = device.altitude ?? '-';
+            document.getElementById('detail-angle').textContent = device.angle ?? '-';
+            document.getElementById('detail-satellites').textContent = device.satellites ?? '-';
+            document.getElementById('detail-battery').textContent = device.battery ? `${device.battery} V` : '-';
+            document.getElementById('detail-voltage').textContent = device.voltage ? `${device.voltage} V` : '-';
+            document.getElementById('detail-gsm').textContent = device.gsm_signal ?? '-';
+            document.getElementById('detail-ignition').textContent = device.ignition ? 'ON' : 'OFF';
+            document.getElementById('detail-time').textContent = device.gps_time ?? '-';
             
             const btn = document.getElementById('view-history-btn');
             btn.onclick = () => loadHistory(device.id, device.name);
@@ -600,14 +654,60 @@
 
                 const marker = L.marker([d.latitude, d.longitude], { icon: customIcon });
                 
+                // const popupContent = `
+                //     <div style="min-width: 180px;">
+                //         <b>${d.name}</b>
+                //         <div class="custom-popup-row"><span>Speed:</span> <span>${d.speed || 0} km/h</span></div>
+                //         <div class="custom-popup-row"><span>Model:</span> <span>${d.model}</span></div>
+                //         <div class="custom-popup-row"><span>Updated:</span> <span>${d.updated_at || '-'}</span></div>
+                //     </div>
+                // `;
                 const popupContent = `
-                    <div style="min-width: 180px;">
-                        <b>${d.name}</b>
-                        <div class="custom-popup-row"><span>Speed:</span> <span>${d.speed || 0} km/h</span></div>
-                        <div class="custom-popup-row"><span>Model:</span> <span>${d.model}</span></div>
-                        <div class="custom-popup-row"><span>Updated:</span> <span>${d.updated_at || '-'}</span></div>
+                    <div style="min-width:220px">
+                    <b>${d.name}</b>
+                    <hr>
+                    <div class="custom-popup-row">
+                    <span>IMEI</span>
+                    <span>${d.imei}</span>
                     </div>
-                `;
+
+                    <div class="custom-popup-row">
+                    <span>Speed</span>
+                    <span>${d.speed} km/h</span>
+                    </div>
+
+                    <div class="custom-popup-row">
+                    <span>Altitude</span>
+                    <span>${d.altitude ?? 0} m</span>
+                    </div>
+
+                    <div class="custom-popup-row">
+                    <span>Battery</span>
+                    <span>${d.battery ?? '-'} V</span>
+                    </div>
+
+                    <div class="custom-popup-row">
+                    <span>Voltage</span>
+                    <span>${d.voltage ?? '-'} V</span>
+                    </div>
+
+                    <div class="custom-popup-row">
+                    <span>Signal</span>
+                    <span>${d.gsm_signal ?? '-'}</span>
+                    </div>
+
+                    <div class="custom-popup-row">
+                    <span>Ignition</span>
+                    <span>${d.ignition ? 'ON' : 'OFF'}</span>
+                    </div>
+
+                    <div class="custom-popup-row">
+                    <span>GPS Time</span>
+                    <span>${d.gps_time ?? '-'}</span>
+                    </div>
+
+                    </div>
+                    `;
 
                 marker.bindPopup(popupContent);
                 marker.on('click', () => showDetails(d));
