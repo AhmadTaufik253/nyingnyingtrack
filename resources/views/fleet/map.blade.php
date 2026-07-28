@@ -25,467 +25,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
     <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --secondary: #64748b;
-            --dark: #0f172a;
-            --light: #f8fafc;
-            --success: #22c55e;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --glass: rgba(255, 255, 255, 0.85);
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --sidebar-width: 360px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--light);
-            color: var(--dark);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-        }
-
-        /* --- MAP CONTAINER --- */
-        #map {
-            flex-grow: 1;
-            height: 100%;
-            z-index: 1;
-        }
-
-        /* --- SIDEBAR --- */
-        #sidebar {
-            width: var(--sidebar-width);
-            height: 100%;
-            background: white;
-            border-right: 1px solid #e2e8f0;
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
-        .sidebar-header {
-            padding: 24px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .brand img {
-            height: 40px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
-        }
-
-        .brand h1 {
-            font-size: 1.25rem;
-            font-weight: 800;
-            letter-spacing: -0.025em;
-            color: var(--dark);
-        }
-
-        .search-container {
-            position: relative;
-        }
-
-        .search-container i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--secondary);
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 12px 12px 40px;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            background: #f1f5f9;
-            font-size: 0.875rem;
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        .search-input:focus {
-            background: white;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-        }
-
-        .device-list-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 12px;
-        }
-
-        .device-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
-
-        .device-item:hover {
-            background: #f8fafc;
-            border-color: #e2e8f0;
-        }
-
-        .device-item.active {
-            background: rgba(37, 99, 235, 0.05);
-            border-color: var(--primary);
-        }
-
-        .device-icon {
-            width: 48px;
-            height: 48px;
-            background: #f1f5f9;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            color: var(--primary);
-            flex-shrink: 0;
-        }
-
-        .device-info {
-            flex-grow: 1;
-        }
-
-        .device-name {
-            font-weight: 600;
-            font-size: 0.95rem;
-            margin-bottom: 2px;
-        }
-
-        .device-meta {
-            font-size: 0.75rem;
-            color: var(--secondary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .status-online { background: var(--success); box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2); }
-        .status-offline { background: var(--secondary); }
-        .status-moving { background: var(--primary); animation: pulse 2s infinite; }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.25em 0.5em;
-            font-size: 0.75rem;
-            font-weight: 700;
-            line-height: 1;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: baseline;
-            border-radius: 0.25rem;
-            color: white;
-        }
-
-        .bg-success { background-color: var(--success); }
-        .bg-secondary { background-color: var(--secondary); }
-
-        /* --- FLOATING CONTROLS --- */
-        .floating-panel {
-            position: absolute;
-            z-index: 999;
-            background: var(--glass);
-            backdrop-filter: blur(12px);
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255,255,255,0.4);
-            padding: 16px;
-        }
-
-        #stats-panel {
-            top: 20px;
-            left: calc(var(--sidebar-width) + 20px);
-            display: flex;
-            gap: 24px;
-        }
-
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .stat-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .stat-label {
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--secondary);
-            letter-spacing: 0.05em;
-        }
-
-        /* #details-panel {
-            bottom: 20px;
-            right: 20px;
-            width: 400px;
-            max-height: 250px;
-            overflow-y: auto;
-            transform: translateY(120%);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        } */
-        #details-panel{
-            bottom:20px;
-            right:20px;
-
-            width:700px;
-            max-height:85vh;
-            overflow-y:auto;
-
-            transform:translateY(120%);
-            transition:transform .4s cubic-bezier(.4,0,.2,1);
-        }
-
-        .log-table-wrapper{
-            margin-top:20px;
-            max-height:300px;
-            overflow-y:auto;
-            border:1px solid #e5e7eb;
-            border-radius:10px;
-        }
-
-        .log-table{
-            width:100%;
-            border-collapse:collapse;
-            font-size:13px;
-        }
-
-        .log-table thead{
-            position:sticky;
-            top:0;
-            background:#f8fafc;
-            z-index:10;
-        }
-
-        .log-table th{
-            padding:10px;
-            text-align:left;
-            border-bottom:1px solid #e5e7eb;
-            font-weight:600;
-        }
-
-        .log-table td{
-            padding:8px 10px;
-            border-bottom:1px solid #f1f5f9;
-        }
-
-        .log-table tbody tr:hover{
-            background:#f8fafc;
-        }
-
-        .log-table td{
-            white-space:nowrap;
-        }
-
-        #details-panel.visible {
-            transform: translateY(0);
-        }
-
-        .details-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .details-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .detail-card {
-            background: rgba(255,255,255,0.5);
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid #f1f5f9;
-        }
-
-        .detail-label {
-            font-size: 0.7rem;
-            color: var(--secondary);
-            margin-bottom: 2px;
-        }
-
-        .detail-value {
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        /* baru */
-        .details-tabs{
-            display:flex;
-            margin-bottom:15px;
-            gap:8px;
-        }
-
-        .tab-btn{
-
-            flex:1;
-
-            border:none;
-
-            background:#f4f4f4;
-
-            padding:10px;
-
-            cursor:pointer;
-
-            border-radius:8px;
-
-            font-weight:600;
-
-        }
-
-        .tab-btn.active{
-
-            background:#2563eb;
-
-            color:white;
-
-        }
-
-        #device-log-list{
-
-            max-height:430px;
-
-            overflow-y:auto;
-
-            display:flex;
-
-            flex-direction:column;
-
-            gap:10px;
-
-        }
-        /* end baru */
-
-        /* --- TOGGLE BUTTON --- */
-        #sidebar-toggle {
-            position: absolute;
-            left: var(--sidebar-width);
-            top: 50%;
-            transform: translateY(-50%);
-            width: 24px;
-            height: 48px;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-left: none;
-            border-radius: 0 8px 8px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1001;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.05);
-        }
-
-        /* --- MOBILE RESPONSIVE --- */
-        @media (max-width: 768px) {
-            #sidebar {
-                position: fixed;
-                transform: translateX(-100%);
-                width: 280px;
-            }
-
-            #sidebar.open {
-                transform: translateX(0);
-            }
-
-            #sidebar-toggle {
-                left: 0;
-                top: 20px;
-                transform: none;
-                width: 40px;
-                height: 40px;
-                border-radius: 8px;
-                border: 1px solid #e2e8f0;
-                margin-left: 10px;
-                transition: left 0.3s;
-            }
-
-            #sidebar.open + #sidebar-toggle {
-                left: 280px;
-            }
-
-            #stats-panel {
-                left: 70px;
-                top: 20px;
-                padding: 10px 16px;
-                gap: 16px;
-                right: 20px;
-                overflow-x: auto;
-            }
-
-            #details-panel {
-                width: calc(100% - 40px);
-                left: 20px;
-            }
-        }
-
-        /* --- LEAFLET CUSTOMS --- */
-        .leaflet-popup-content-wrapper {
-            border-radius: 12px;
-            padding: 4px;
-        }
-
-        .leaflet-popup-content b {
-            font-size: 1rem;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .custom-popup-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            margin-bottom: 4px;
-            font-size: 0.8rem;
-        }
-    </style>
+    <!-- Responsive Fleet Map Styles -->
+    <link rel="stylesheet" href="{{ asset('css/fleet-map.css') }}">
 </head>
 <body>
 
@@ -517,8 +58,11 @@
         </div>
     </aside>
 
-    <div id="sidebar-toggle">
-        <i class="fa-solid fa-chevron-right"></i>
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div id="sidebar-toggle" aria-label="Toggle sidebar">
+        <i class="fa-solid fa-bars"></i>
     </div>
 
     <!-- Stats Panel -->
@@ -544,22 +88,19 @@
     <!-- Details Panel -->
     <div id="details-panel" class="floating-panel">
         <div class="details-header">
-            <h3 id="detail-name" style="font-weight: 700;">Device Details</h3>
-            <button onclick="hideDetails()" style="background:none; border:none; cursor:pointer; color:var(--secondary);">
+            <h3 id="detail-name">Device Details</h3>
+            <button onclick="hideDetails()" class="close-btn" aria-label="Close details">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
-        <button
-            class="tab-btn active"
-            onclick="openTab(event, 'info')">
-            Device Info
-        </button>
-
-        <button
-            class="tab-btn"
-            onclick="openTab(event, 'logs')">
-            Logs
-        </button>
+        <div class="details-tabs">
+            <button class="tab-btn active" onclick="openTab(event, 'info')">
+                <i class="fa-solid fa-circle-info"></i> Info
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'logs')">
+                <i class="fa-solid fa-list-ul"></i> Logs
+            </button>
+        </div>
         <div id="tab-info">
             <!-- details-grid -->
             <div class="details-grid">
@@ -650,11 +191,9 @@
             </div>
         </div>
         
-        <div style="margin-top: 16px;">
-            <button id="view-history-btn" class="search-input" style="padding: 10px; background: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer; width: 100%;">
-                <i class="fa-solid fa-route"></i> View Movement History
-            </button>
-        </div>
+        <button id="view-history-btn" class="history-btn">
+            <i class="fa-solid fa-route"></i> View Movement History
+        </button>
     </div>
 
     <!-- Map -->
@@ -724,15 +263,29 @@
         });
 
         // --- UI HELPERS ---
+        const isMobile = () => window.innerWidth <= 768;
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const toggleIcon = document.querySelector('#sidebar-toggle i');
+
+        const openSidebar = () => {
+            sidebar.classList.add('open');
+            toggleIcon.className = 'fa-solid fa-xmark';
+            if (isMobile()) overlay.classList.add('active');
+        };
+
+        const closeSidebar = () => {
+            sidebar.classList.remove('open');
+            toggleIcon.className = 'fa-solid fa-bars';
+            overlay.classList.remove('active');
+        };
+
         const toggleSidebar = () => {
-            const sidebar = document.getElementById('sidebar');
-            const icon = document.querySelector('#sidebar-toggle i');
-            sidebar.classList.toggle('open');
-            icon.classList.toggle('fa-chevron-right');
-            icon.classList.toggle('fa-chevron-left');
+            sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
         };
 
         document.getElementById('sidebar-toggle').addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', closeSidebar);
 
         const hideDetails = () => {
             document.getElementById('details-panel').classList.remove('visible');
@@ -794,8 +347,8 @@
                         <td>
                             ${
                                 log.ignition
-                                    ? '<span class="badge bg-success">ON</span>'
-                                    : '<span class="badge bg-secondary">OFF</span>'
+                                    ? '<span class="badge badge-success">ON</span>'
+                                    : '<span class="badge badge-secondary">OFF</span>'
                             }
                         </td>
                     </tr>
@@ -822,12 +375,15 @@
             document.getElementById('detail-voltage').textContent = device.voltage ? `${device.voltage} V` : '-';
             document.getElementById('detail-gsm').textContent = device.gsm_signal ?? '-';
             document.getElementById('detail-ignition').textContent = device.ignition ? 'ON' : 'OFF';
-            document.getElementById('detail-time').textContent = device.gps_time ?? '-';
+            // document.getElementById('detail-time').textContent = device.gps_time ?? '-';
             loadDeviceLogs(device.id);
             const btn = document.getElementById('view-history-btn');
             btn.onclick = () => loadHistory(device.id, device.name);
             
             document.getElementById('details-panel').classList.add('visible');
+
+            // Close sidebar on mobile to show the map
+            if (isMobile()) closeSidebar();
 
             // Zoom to marker
             if (markersMap[device.id]) {
@@ -986,7 +542,7 @@
 
                 const path = history.map(p => [p.latitude, p.longitude]);
                 activePolyline = L.polyline(path, {
-                    color: 'var(--primary)',
+                    color: '#0d9488',
                     weight: 5,
                     opacity: 0.7,
                     lineJoin: 'round'
@@ -1004,6 +560,21 @@
 
         // --- EVENTS ---
         document.getElementById('deviceSearch').addEventListener('input', () => renderDeviceList(allDevices));
+
+        // Handle window resize: close sidebar on transition to desktop, fix map
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (!isMobile()) {
+                    overlay.classList.remove('active');
+                }
+                map.invalidateSize();
+            }, 150);
+        });
+
+        // Fix map size after sidebar transitions
+        sidebar.addEventListener('transitionend', () => map.invalidateSize());
 
         // --- INITIAL LOAD ---
         loadDevices();
