@@ -51,7 +51,7 @@ class FleetMapController extends Controller
                 'gsm_signal' => $device->gsm_signal,
                 'ignition' => $device->ignition,
 
-                'gps_time' => $last?->gps_time,
+                'gps_time' => $last?->gps_time->format('d M y H:i:s'),
 
                 // Dianggap online jika last_seen ada dan kurang dari 5 menit yang lalu
                 'online' => $device->last_seen && $device->last_seen->diffInMinutes(now()) <= 5,
@@ -108,32 +108,6 @@ class FleetMapController extends Controller
         );
     }
 
-    // public function deviceLogs($id)
-    // {
-    //     $device = Device::findOrFail($id);
-
-    //     return $device->positions()
-    //         ->latest('gps_time')
-    //         ->limit(50)
-    //         ->get([
-    //             'gps_time',
-    //             'speed',
-    //             'latitude',
-    //             'longitude',
-    //             'attributes'
-    //         ])
-    //         ->map(function ($row) {
-    //             return [
-    //                 'gps_time' => $row->gps_time->format('Y-m-d H:i:s'),
-    //                 'speed' => $row->speed,
-    //                 'latitude' => $row->latitude,
-    //                 'longitude' => $row->longitude,
-    //                 'battery' => $row->attributes['battery'] ?? '-',
-    //                 'gsm_signal' => $row->attributes['gsm_signal'] ?? '-',
-    //                 'ignition' => $row->attributes['ignition'] ?? false,
-    //             ];
-    //         });
-    // }
     public function deviceLogs($id)
     {
         $device = Device::findOrFail($id);
@@ -168,6 +142,12 @@ class FleetMapController extends Controller
                     'gsm_signal' => $attr['21'] ?? null,
 
                     'ignition'   => ($attr['239'] ?? 0) == 1,
+
+                    'odometer'   => $attr['16'] ?? null,
+
+                    'dout1'      => $attr['179'] ?? null,
+
+                    'gnss'      => $attr['69'] ?? null,
                 ];
             });
 

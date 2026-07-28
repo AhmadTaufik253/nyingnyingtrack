@@ -76,8 +76,8 @@
             <span class="stat-value" style="color: var(--primary);" id="count-moving">0</span>
         </div>
         <div class="stat-item">
-            <span class="stat-label">Stationary</span>
-            <span class="stat-value" style="color: var(--success);" id="count-stationary">0</span>
+            <span class="stat-label">Online</span>
+            <span class="stat-value" style="color: var(--success);" id="count-online">0</span>
         </div>
         <div class="stat-item">
             <span class="stat-label">Offline</span>
@@ -136,7 +136,7 @@
                 </div>
 
                 <div class="detail-card">
-                    <div class="detail-label">Course</div>
+                    <div class="detail-label">Angle</div>
                     <div class="detail-value" id="detail-angle">-</div>
                 </div>
 
@@ -178,6 +178,9 @@
                             <th>Battery</th>
                             <th>Signal</th>
                             <th>Ignition</th>
+                            <th>Odometer</th>
+                            <th>D OUT 1</th>
+                            <th>GNSS Status</th>
                         </tr>
                     </thead>
                     <tbody id="device-log-table">
@@ -243,7 +246,7 @@
         });
 
         // --- INIT MAP ---
-        const map = L.map('map', { 
+        const map = L.map('map', {
             zoomControl: false,
             attributionControl: false
         }).setView([-4.0106646, 113.8587308], 5);
@@ -319,21 +322,6 @@
                 return;
             }
 
-            // logs.forEach(log=>{
-
-            //     tbody.innerHTML += `
-            //         <tr>
-            //             <td>${log.gps_time}</td>
-            //             <td>${log.speed} km/h</td>
-            //             <td>${Number(log.latitude).toFixed(6)}</td>
-            //             <td>${Number(log.longitude).toFixed(6)}</td>
-            //             <td>${log.battery ?? "-"}</td>
-            //             <td>${log.gsm_signal ?? "-"}</td>
-            //             <td>${log.ignition ? "ON" : "OFF"}</td>
-            //         </tr>
-            //     `;
-
-            // });
             logs.forEach(log => {
 
                 tbody.innerHTML += `
@@ -351,6 +339,9 @@
                                     : '<span class="badge badge-secondary">OFF</span>'
                             }
                         </td>
+                        <td>${log.odometer ?? "-"}</td>
+                        <td>${log.dout1 ?? "-"}</td>
+                        <td>${log.gnss ?? "-"}</td>
                     </tr>
                 `;
 
@@ -410,7 +401,7 @@
         function updateStats(devices) {
             document.getElementById('count-total').textContent = devices.length;
             document.getElementById('count-moving').textContent = devices.filter(d => d.online && (d.speed || 0) > 0).length;
-            document.getElementById('count-stationary').textContent = devices.filter(d => d.online && (d.speed || 0) == 0).length;
+            document.getElementById('count-online').textContent = devices.filter(d => d.online && (d.speed || 0) == 0).length;
             document.getElementById('count-offline').textContent = devices.filter(d => !d.online).length;
         }
 
@@ -418,8 +409,8 @@
             const container = document.getElementById('deviceList');
             const searchTerm = document.getElementById('deviceSearch').value.toLowerCase();
             
-            const filtered = devices.filter(d => 
-                d.name.toLowerCase().includes(searchTerm) || 
+            const filtered = devices.filter(d =>
+                d.name.toLowerCase().includes(searchTerm) ||
                 d.imei.toLowerCase().includes(searchTerm)
             );
 
@@ -458,15 +449,7 @@
                 if (!d.latitude || !d.longitude) return;
 
                 const marker = L.marker([d.latitude, d.longitude], { icon: customIcon });
-                
-                // const popupContent = `
-                //     <div style="min-width: 180px;">
-                //         <b>${d.name}</b>
-                //         <div class="custom-popup-row"><span>Speed:</span> <span>${d.speed || 0} km/h</span></div>
-                //         <div class="custom-popup-row"><span>Model:</span> <span>${d.model}</span></div>
-                //         <div class="custom-popup-row"><span>Updated:</span> <span>${d.updated_at || '-'}</span></div>
-                //     </div>
-                // `;
+
                 const popupContent = `
                     <div style="min-width:220px">
                     <b>${d.name}</b>
