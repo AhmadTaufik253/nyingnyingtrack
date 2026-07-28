@@ -365,7 +365,7 @@
             document.getElementById('detail-model').textContent = device.model;
             document.getElementById('detail-speed').textContent = `${device.speed || 0} km/h`;
             // document.getElementById('detail-time').textContent = device.updated_at || 'Never';
-            document.getElementById('detail-time').textContent = formatDateTime(device.updated_at);
+            // document.getElementById('detail-time').textContent = formatDateTime(device.updated_at);
             document.getElementById('detail-latitude').textContent = device.latitude ?? '-';
             document.getElementById('detail-longitude').textContent = device.longitude ?? '-';
             document.getElementById('detail-altitude').textContent = device.altitude ?? '-';
@@ -375,7 +375,7 @@
             document.getElementById('detail-voltage').textContent = device.voltage ? `${device.voltage} V` : '-';
             document.getElementById('detail-gsm').textContent = device.gsm_signal ?? '-';
             document.getElementById('detail-ignition').textContent = device.ignition ? 'ON' : 'OFF';
-            // document.getElementById('detail-time').textContent = device.gps_time ?? '-';
+            document.getElementById('detail-time').textContent = device.gps_time ?? '-';
             loadDeviceLogs(device.id);
             const btn = document.getElementById('view-history-btn');
             btn.onclick = () => loadHistory(device.id, device.name);
