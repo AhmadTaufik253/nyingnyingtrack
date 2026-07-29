@@ -557,7 +557,7 @@
         });
 
         // Fix map size after sidebar transitions
-        sidebar.addEventListener('transitionend', () => map.invalidateSize());
+        sidebar.addEventListener('transitionend', () => map.invalidateSize()); 
 
         // --- INITIAL LOAD ---
         loadDevices();
