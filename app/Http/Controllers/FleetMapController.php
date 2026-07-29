@@ -143,7 +143,8 @@ class FleetMapController extends Controller
 
                     'ignition'   => ($attr['239'] ?? 0) == 1,
 
-                    'odometer'   => $attr['16'] ?? null,
+                    // 'odometer'   => $attr['16'] ?? null,
+                    'odometer'   => $attr['16'] ?? $attr['odometer'] ?? null,
 
                     'dout1'      => $attr['179'] ?? null,
 
