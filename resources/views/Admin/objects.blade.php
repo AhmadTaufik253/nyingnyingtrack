@@ -360,7 +360,7 @@
             </a>
             <a href="#" class="topnav-link">
                 <i class="fa-solid fa-file-lines"></i> Content
-            </a>
+            </a> 
         </div>
 
         <div class="topnav-user-wrapper" style="position:relative;">
