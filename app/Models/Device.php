@@ -39,6 +39,7 @@ class Device extends Model
         'ignition',
 
         'last_position_time',
+        'plate_number',
     ];
 
     protected $casts = [
@@ -57,6 +58,11 @@ class Device extends Model
         'last_seen' => 'datetime',
         'last_position_time' => 'datetime',
     ];
+
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class);
+    // }
 
     public function customer()
     {

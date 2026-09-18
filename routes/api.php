@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DevicePositionController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,5 +29,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'apiLogout']);
 });
 
-Route::post('/device/position', [\App\Http\Controllers\DevicePositionController::class, 'receive']);
-Route::get('/device/position', [\App\Http\Controllers\DevicePositionController::class, 'receive']);
+Route::post('/device/position', [DevicePositionController::class, 'receive']);
+Route::get('/device/position', [DevicePositionController::class, 'receive']);

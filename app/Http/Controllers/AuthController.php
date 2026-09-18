@@ -32,6 +32,18 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
+            $user = Auth::user();
+
+            // catat waktu login terakhir
+            $user->update([
+                'last_login_at' => now(),
+                'last_login_ip' => $request->ip(),
+            ]);
+
+            if ($user->role === 'admin') {
+                return redirect()->route('admin.users')->with('success', 'Logged in successfully!');
+            }
+
             return redirect()->intended('/fleet-map')->with('success', 'Logged in successfully!');
         }
 
@@ -99,5 +111,15 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Logged out successfully'
         ], 200);
+    }
+
+    public function showLinkRequestForm()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function sendResetLink(Request $req)
+    {
+        // next
     }
 }

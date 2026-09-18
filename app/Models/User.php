@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'email', 'email_verified_at', 'password', 'role', 'password'
+        'name', 'email', 'email_verified_at', 'password', 'role', 'password', 'last_login_at', 'last_login_ip'
     ];
 
     /**
@@ -39,10 +39,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'last_login_at' => 'datetime',
     ];
 
     public function customer()
     {
         return $this->hasOne(Customer::class);
+    }
+
+    public function devices()
+    {
+        return $this->hasManyThrough(Device::class, Customer::class);
     }
 }

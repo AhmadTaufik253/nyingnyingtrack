@@ -13,11 +13,9 @@ class DevicePositionController extends Controller
         $request->validate([
             'imei' => 'required|string',
             'records' => 'required|array|min:1',
-
             'records.*.latitude' => 'required|numeric',
             'records.*.longitude' => 'required|numeric',
             'records.*.position_time' => 'required|date',
-
             'records.*.speed' => 'nullable|numeric',
             'records.*.altitude' => 'nullable|integer',
             'records.*.course' => 'nullable|integer',
@@ -39,44 +37,30 @@ class DevicePositionController extends Controller
             $gpsTime = Carbon::parse($record['position_time'], 'UTC')->setTimezone('Asia/Jakarta');
 
             $position = DevicePosition::create([
-
                 'device_id' => $device->id,
-
                 'latitude' => $record['latitude'],
                 'longitude' => $record['longitude'],
-
                 'altitude' => $record['altitude'] ?? 0,
-
                 'angle' => $record['course'] ?? 0,
-
                 'speed' => $record['speed'] ?? 0,
-
                 'satellites' => $record['satellite'] ?? 0,
-
                 'priority' => $record['priority'] ?? null,
-
                 'event_id' => $record['event_id'] ?? null,
-
                 'gps_time' => $gpsTime,
-
                 'attributes' => $record['attributes'] ?? [],
             ]);
 
             // update posisi terakhir device
             $device->update([
-
                 'is_online' => true,
                 'last_seen' => now(),
-
                 'last_latitude' => $position->latitude,
                 'last_longitude' => $position->longitude,
                 'last_altitude' => $position->altitude,
                 'last_speed' => $position->speed,
                 'last_course' => $position->angle,
-
                 'last_satellites' => $position->satellites,
                 'last_position_time' => $position->gps_time,
-
                 'battery'            => $record['battery'] ?? null,
                 'voltage'            => $record['voltage'] ?? null,
                 'gsm_signal'         => $record['gsm_signal'] ?? null,
